@@ -190,5 +190,13 @@ footer{padding:40px 0 60px;color:var(--mute);font-size:13px}
     }).catch(function(){});
 })();
 </script>
+<script>
+/* Links to the PDFs and the creator always load the newest version (skips the browser cache). */
+document.addEventListener("click",function(e){
+  var a=e.target.closest&&e.target.closest("a[href]"); if(!a) return;
+  var raw=a.getAttribute("href"); if(!/\.(pdf|html)(#.*)?$/i.test(raw)||/^https?:/i.test(raw)) return;
+  var u=new URL(raw,location.href); u.searchParams.set("v",Date.now()); a.href=u.toString();
+});
+</script>
 </body>
 </html>
