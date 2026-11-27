@@ -69,7 +69,7 @@ footer{padding:40px 0 60px;color:var(--mute);font-size:13px}
 .sublink{color:inherit;text-decoration:none;border-bottom:1px dashed var(--c)}.sublink:hover{color:var(--c)}.sublink:after{content:" \2197";font-size:.6em;color:var(--c)}</style>
 </head>
 <body>
-<nav><div class="in"><b>SPIRIT PRESSURE <span class="ver">v0.5<span id="upd"></span></span></b><a href="#overview">Overview</a><a href="#classes">Classes</a><a href="#reiatsu">Reiatsu</a><a href="#roadmap">Roadmap</a><a href="#changelog">Changelog</a><a href="creator.html">Character Creator</a><a href="simulator.html">Fight Simulator</a><a href="Spirit_Pressure_Players_Handbook.pdf">Player's Handbook</a><a href="Spirit_Pressure_GM_Guide.pdf">GM Guide</a></div></nav>
+<nav><div class="in"><b>SPIRIT PRESSURE <span class="ver">v0.6<span id="upd"></span></span></b><a href="#overview">Overview</a><a href="#classes">Classes</a><a href="#reiatsu">Reiatsu</a><a href="#roadmap">Roadmap</a><a href="#changelog">Changelog</a><a href="creator.html">Character Creator</a><a href="simulator.html">Fight Simulator</a><a href="Spirit_Pressure_Players_Handbook.pdf">Player's Handbook</a><a href="Spirit_Pressure_GM_Guide.pdf">GM Guide</a></div></nav>
 
 <header class="hero">
 <svg viewBox="0 0 760 760" aria-hidden="true">
@@ -113,7 +113,7 @@ footer{padding:40px 0 60px;color:var(--mute);font-size:13px}
 </div></div></article>
 
 <article class="cls qu"><div class="band"><h3>Quincy</h3><p>Gather the light. Never miss. Patient hunters who weave spirit particles into bows, blades and barriers.</p></div>
-<div class="body"><div class="stats"><span class="stat">Hit Die <b>d8</b></span><span class="stat">Spirit ability <b>Intelligence</b></span><span class="stat">Saves <b>DEX, INT</b></span><span class="stat">Signature <b>Reishi Bow, Seele Schneider</b></span></div>
+<div class="body"><div class="stats"><span class="stat">Hit Die <b>d10</b></span><span class="stat">Spirit ability <b>Intelligence</b></span><span class="stat">Saves <b>DEX, INT</b></span><span class="stat">Signature <b>Reishi Bow, Seele Schneider</b></span></div>
 <div class="grid g4">
 <div class="sub" style="--c:#2F6FD0"><h4><a class="sublink" href="Spirit_Pressure_Players_Handbook.pdf#page=26">Uryū Ishida</a></h4><small style="margin:0 0 6px">Marksman Art</small><p>One arrow, one answer. Long, piercing shots.</p><small>Ultimate: Vollst&auml;ndig Marksman</small></div>
 <div class="sub" style="--c:#8F6BE0"><h4><a class="sublink" href="Spirit_Pressure_Players_Handbook.pdf#page=26">Sōken Ishida</a></h4><small style="margin:0 0 6px">Blade Art</small><p>Close in and cut the spirit itself with Seele Schneider.</p><small>Ultimate: Blade Storm</small></div>
@@ -122,7 +122,7 @@ footer{padding:40px 0 60px;color:var(--mute);font-size:13px}
 </div></div></article>
 
 <article class="cls hb"><div class="band"><h3>Hollowborn</h3><p>The monster inside is not you. Not quite. Humans who carry a hollow's power: claws, surges, regeneration and a devastating Cero.</p></div>
-<div class="body"><div class="stats"><span class="stat">Hit Die <b>d12</b></span><span class="stat">Spirit ability <b>Constitution</b></span><span class="stat">Saves <b>CON, STR</b></span><span class="stat">Signature <b>Hollow Surge, Cero</b></span></div>
+<div class="body"><div class="stats"><span class="stat">Hit Die <b>d10</b></span><span class="stat">Spirit ability <b>Constitution</b></span><span class="stat">Saves <b>CON, STR</b></span><span class="stat">Signature <b>Hollow Surge, Cero</b></span></div>
 <div class="grid g4">
 <div class="sub" style="--c:#C0272D"><h4><a class="sublink" href="Spirit_Pressure_Players_Handbook.pdf#page=31">Shinji Hirako</a></h4><small style="margin:0 0 6px">Vizard</small><p>You wear the mask by choice. A disciplined swordsman.</p><small>Ultimate: Full Mask</small></div>
 <div class="sub" style="--c:#D9701A"><h4><a class="sublink" href="Spirit_Pressure_Players_Handbook.pdf#page=31">Grimmjow</a></h4><small style="margin:0 0 6px">Feral</small><p>Instinct first. Sonído speed, pounces and Pesquisa senses.</p><small>Ultimate: Pantera</small></div>
@@ -147,7 +147,7 @@ footer{padding:40px 0 60px;color:var(--mute);font-size:13px}
 <tr><th>Technique</th><th>RP</th><th>Technique</th><th>RP</th></tr>
 <tr><td>Shunpo / Sonído / Hirenkyaku</td><td>1</td><td>Shikai</td><td>2</td></tr>
 <tr><td>Spirit Guard (reaction)</td><td>2</td><td>Hollow Surge</td><td>2</td></tr>
-<tr><td>Cero</td><td>3</td><td>Kid&#333; tiers 1-6</td><td>1, 2, 3, 5, 7, 9</td></tr>
+<tr><td>Cero</td><td>4 (3 for Ulquiorra)</td><td>Kid&#333; tiers 1-6</td><td>1, 2, 3, 5, 7, 9</td></tr>
 <tr><td>Bankai / Vollst&auml;ndig / Complete / Ultimate</td><td>6</td><td>Imprints</td><td>1-5</td></tr>
 </table>
 </div></section>
@@ -168,6 +168,8 @@ footer{padding:40px 0 60px;color:var(--mute);font-size:13px}
 
 <section id="changelog"><div class="wrap">
 <h2>Changelog</h2>
+<h3>v0.6 &middot; 27 Nov 2026</h3>
+<ul class="log"><li>Kid&#333; reworked: three voices (full chant, spoken, cut chant) and <b>Weaving</b>, where casting two different schools in one turn gives the second one a free chant. Every Soul Reaper subclass now changes how you cast.</li><li>New spells, including Mass Restoration and the first <b>Forbidden Kid&#333;</b> (Kuyō Shibari, Kurohitsugi, Sajō Sabaku, Inochi Gaeshi). Each has a Toll the caster must pay and its own special effect.</li><li>Creator: pick your Kid&#333; (Soul Reapers), copy a share link, save in this browser, and subclass names link to the handbook.</li><li>Healing now scales with level (Benihime Reversal, Soten Kisshun, Circle and Mass Restoration).</li><li>Balance pass from the simulator: Hollowborn d10 hit die, flat damage reduction in place of resistance and a 4 RP Cero; Quincy Piercing Light and a third attack at 18; Quincy and Fullbringer d10 hit die.</li><li>GM Guide: more enemies (Gillian, Espada-style duelist, Forbidden Kid&#333; Master and others), seven new relics, advice on teaching Forbidden Kid&#333; and a starter adventure, The Night the Gate Opened.</li></ul>
 <h3>v0.5 &middot; 27 Nov 2026</h3>
 <ul class="log"><li>New Fight Simulator: pick a subclass and level, choose how the enemies behave (brute, focus, assassin, hunter or bully) and run a thousand fights, compare all 16 subclasses, or watch one fight round by round.</li><li>Subclasses reworked to match the series: Aizen (Ky&#333;ka Suigetsu), Zaraki (Nozarashi), Urahara (Benihime), Riruka (Dollhouse), Tsukishima, Ginj&#333;, Orihime, Haschwalth, Grimmjow, Yammy and Ulquiorra. Yamamoto is now fire only.</li><li>Quincy: the Reishi Bow hits with DEX, damage adds INT, range 120/360.</li><li>Creator: feature names link to the Player's Handbook, skills show their ability, and a Recommended build button fills in your class's best scores (&#9733; best, &#9670; second).</li><li>First balance pass from a fight simulator (in the tools folder): Hollowborn AC is 10 + DEX + half CON and Hollow Vitality heals half proficiency; Fullbringer Bond Weapon is now 1d10; Yamamoto's fire wall deals 1d8 and the burning is removed.</li><li>Support subclasses are stronger: Orihime (3d6 healing, 50 HP shield), Haschwalth (2d8 Warding Bow, cheaper dome, 3d6 returned damage), Urahara (4d6 healing, 1d8 domain healing) and Tsukishima (your allies also get advantage from Insertion).</li></ul>
 <h3>v0.4 &middot; 27 Nov 2026</h3>

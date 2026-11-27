@@ -81,7 +81,7 @@ function fight(party,foes,rng,log,maxr){
           if(hit) for(const a of hero.abil){ if(a.kind==="react"&&a.replay&&tgt!==hero&&hero.rp-a.cost>=reserve(hero)){hero.rp-=a.cost;const r2=d20(rng,-1);hit=r2===20||(r2!==1&&r2+t_>=ac);if(!hit){stat.saved+=dm_;L("Hero forces a re-roll: miss")}break}}}
         if(!hit)continue;
         let dm=dm_;
-        if(tgt===hero){dm*=(1-hero.resist); const sr=hero.abil.find(a=>a.selfred); if(sr&&hero.rp>=2){hero.rp-=2;dm=Math.max(0,dm-sr.selfred)}}
+        if(tgt===hero){dm*=(1-hero.resist);{const dr=hero.buffs.reduce((q,b)=>q+(b.dr||0),0);if(dr)dm=Math.max(dm*.2,dm-dr)} const sr=hero.abil.find(a=>a.selfred); if(sr&&hero.rp>=2){hero.rp-=2;dm=Math.max(0,dm-sr.selfred)}}
         if(tgt!==hero&&hero.wall>0&&rng()<.5){const ab=Math.min(dm,hero.wall);hero.wall-=ab;dm-=ab;stat.saved+=ab}
         if(tgt.hp>0&&tgt.hp-dm<=0&&tgt===hero&&!hero.bond_save&&hero.cls==="fb"){hero.bond_save=true;tgt.hp=1;continue}
         tgt.hp-=dm; const th=hero.buffs.reduce((s,b)=>s+(b.thorns||0)+(b.retaliate||0),0); if(th&&tgt===hero)e.hp-=th*.8;

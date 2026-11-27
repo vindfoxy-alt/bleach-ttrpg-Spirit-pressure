@@ -59,19 +59,19 @@ def chassis(cls, L):
         h.rpmax = 2 * L + m
     elif cls == "qu":
         die = {3: 4.5, 8: 4.5, 13: 5.5, 18: 6.5}[L]
-        h = H((4.5 + 2) * L + 4, {3: 14, 8: 15, 13: 16, 18: 16}[L], [(p + m, die + m)] * {3: 1, 8: 2, 13: 2, 18: 2}[L], "qu")
+        h = H((5.5 + 2) * L + 6, {3: 14, 8: 15, 13: 16, 18: 16}[L], [(p + m, die + m + {3: 0, 8: 3, 13: 5, 18: 8}[L])] * {3: 1, 8: 2, 13: 2, 18: 3}[L], "qu")
         h.rpmax = 2 * L + m
         h.ranged = True
         h.conc = p            # Concentrated Shot: up to prof RP, +1d6 each
     elif cls == "hb":
         claw = {3: 3.5, 8: 4.5, 13: 5.5, 18: 6.5}[L]
         sd = {3: 2, 8: 2, 13: 3, 18: 4}[L]
-        h = H((7 + 3) * L + 8, 10 + 3 + CON[L] // 2, [(p + m, claw + m)] * {3: 1, 8: 2, 13: 2, 18: 2}[L], "hb")
+        h = H((6 + 3) * L + 7, 10 + 3 + CON[L] // 2, [(p + m, claw + m)] * {3: 1, 8: 2, 13: 2, 18: 2}[L], "hb")
         h.rpmax = 2 * L + CON[L] + 1
         h.surge = sd
         h.cero = {3: 10.5, 8: 14, 13: 28, 18: 35}[L]
     else:  # fb
-        h = H((4.5 + 2) * L + 4, {3: 13, 8: 14, 13: 15, 18: 15}[L], [(p + m, 5.5 + m + (3.5 if L >= 13 else 0))] * {3: 1, 8: 2, 13: 2, 18: 2}[L], "fb")
+        h = H((5.5 + 2) * L + 6, {3: 13, 8: 14, 13: 15, 18: 15}[L], [(p + m, 5.5 + m + (3.5 if L >= 13 else 0))] * {3: 1, 8: 2, 13: 2, 18: 2}[L], "fb")
         h.rpmax = 2 * L + m
     h.cls = cls; h.L = L
     h.rp = h.rpmax * RP_FIGHT
@@ -88,8 +88,8 @@ def sub(cls, name, L):
     A = []
     surge = getattr(h, "surge", 0)
     if cls == "hb":
-        A.append(dict(kind="buff", cost=2, resist=0.5, xd=surge, heal_r=PROF[L], nofocus=1))
-        A.append(dict(kind="act", cost=3, aoe=h.cero, name="cero", targets=2))
+        A.append(dict(kind="buff", cost=2, dr=L // 2 + CON[L] // 2, xd=surge, heal_r=PROF[L], nofocus=1))
+        A.append(dict(kind="act", cost=4, aoe=h.cero, name="cero", targets=2))
     if cls == "sr":
         A.append(dict(kind="buff", cost=2, xd=0, name="shikai"))
     if cls == "qu":
@@ -116,7 +116,7 @@ def sub(cls, name, L):
         if U: A.append(dict(kind="buff", cost=6, xd=3.5, adv=1, ctrl_aura=0.15, once=True))
     elif name == "Urahara":
         A.append(dict(kind="buff", cost=0, ctrl_hit=0.4))
-        if S: A.append(dict(kind="act", cost=2, heal=10.5 + 4, name="kaido"))
+        if S: A.append(dict(kind="act", cost=2, heal=(10.5 if L<11 else 21 if L<17 else 28) + 4, name="kaido"))
         if U: A.append(dict(kind="buff", cost=6, slow=0.5, heal_all=3.5, once=True))
         if X: A.append(dict(kind="act", cost=4, aoe={17: 28, 18: 30}.get(L, 30), targets=2, name="k6"))
     elif name == "Uryū Ishida":
@@ -156,7 +156,7 @@ def sub(cls, name, L):
         if U: A.append(dict(kind="buff", cost=6, ac=4, resist=0.5, thorns=7, once=True))
     elif name == "Ulquiorra":
         for a in A:
-            if a.get("name") == "cero": a["cost"] = 2; a["aoe"] = a["aoe"] + 7 * 0.5
+            if a.get("name") == "cero": a["cost"] = 3; a["aoe"] = a["aoe"] + 7 * 0.5
         if S: A.append(dict(kind="act", cost=1, dmg=4.5 * 3 * 0.6, name="bala"))
         if U: A.append(dict(kind="buff", cost=6, ceromult=1.4, once=True))
         if X: A.append(dict(kind="act", cost=10, aoe=66, targets=1, name="oscuras", once=True))
@@ -177,7 +177,7 @@ def sub(cls, name, L):
         if U: A.append(dict(kind="buff", cost=6, aura=18 * 0.55, ctrl_aura=0.1, once=True))
         if X: A.append(dict(kind="act", cost=8, undo=1, name="recall", once=True))
     elif name == "Orihime":
-        A.append(dict(kind="act", cost=2, heal=7 + 4 + 3, name="soten"))
+        A.append(dict(kind="act", cost=2, heal=(10.5 if L<9 else 14 if L<13 else 17.5 if L<17 else 21) + 4, name="soten"))
         A.append(dict(kind="react", cost=1, ac_party=2))
         if S: A.append(dict(kind="act", cost=3, wall=40, name="santen"))
         if U: A.append(dict(kind="buff", cost=6, heal_mult=2, once=True))
@@ -332,7 +332,7 @@ def fight(party, foes, rng, maxr=12):
                     if not r: break
                     tgt = r[0]
                 extra = xd + (xdfirst if first else 0)
-                if conc and h.rp >= conc and i == 0:
+                if conc and h.rp >= conc and (i == 0 or getattr(h, "conc_all", False)):
                     spend = min(conc, int(h.rp * 0.4)); extra += 3.5 * spend; h.rp -= spend
                 a_ = adv if first else 0
                 if getattr(tgt, "marked", 0): a_ = 1
@@ -378,6 +378,8 @@ def fight(party, foes, rng, maxr=12):
                 dm = dm_
                 if tgt is hero:
                     dm *= (1 - hero.resist)
+                    _dr = sum(b.get("dr", 0) for b in hero.buffs)
+                    if _dr: dm = max(dm * 0.2, dm - _dr)
                     sr = [a for a in hero.abil if a.get("selfred")]
                     if sr and hero.rp >= 2: hero.rp -= 2; dm = max(0, dm - sr[0]["selfred"])
                 if tgt is not hero and hero.wall > 0 and rng.random() < 0.5:
