@@ -54,7 +54,7 @@ section h2{font-size:42px}
 .stat b{color:var(--c)}
 .sub{display:flex;flex-direction:column;border:1px solid var(--line);border-top:5px solid var(--c);border-radius:8px;padding:16px 18px;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 14%,#13131a),#13131a 70%)}
 .sub h4{margin:0 0 4px;font-family:Georgia,serif;font-size:20px}
-.sub p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:0;color:var(--mute);font-size:16px}
+.sub p{flex:none;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:0;color:var(--mute);font-size:16px}
 .sub small{display:block;margin-top:10px;color:var(--c);font-weight:700;font-size:13px;letter-spacing:.05em;text-transform:uppercase}
 .sub small:last-child{margin-top:auto;padding-top:12px}
 .sr{--c:var(--sr)}.qu{--c:var(--qu)}.hb{--c:var(--hb)}.fb{--c:var(--fb)}
@@ -106,15 +106,15 @@ footer{padding:40px 0 60px;color:var(--mute);font-size:13px}
 <div class="body"><div class="stats"><span class="stat">Hit Die <b>d10</b></span><span class="stat">Spirit ability <b>Wisdom</b></span><span class="stat">Saves <b>STR, WIS</b></span><span class="stat">Signature <b>Shikai, Shunpo, Kid&#333;</b></span></div>
 <div class="grid g4">
 <div class="sub" style="--c:#D9531E"><h4>Yamamoto</h4><small style="margin:0 0 6px">Elemental Zanpakut&#333;</small><p>Fire, frost, storm or quake. Your blade is a living element.</p><small>Ultimate: Elemental Bankai</small></div>
-<div class="sub" style="--c:#7B4FB8"><h4>Aizen</h4><small style="margin:0 0 6px">Mirage Zanpakut&#333;</small><p>Afterimages, duplicates and false victories. Fights with deception.</p><small>Ultimate: Total Illusion</small></div>
+<div class="sub" style="--c:#7B4FB8"><h4>Aizen</h4><small style="margin:0 0 6px">Mirage Zanpakut&#333;</small><p>Afterimages and duplicates. Wins by deception.</p><small>Ultimate: Total Illusion</small></div>
 <div class="sub" style="--c:#8C5A2B"><h4>Zaraki</h4><small style="margin:0 0 6px">Brute Zanpakut&#333;</small><p>No tricks. A massive blade with crushing blows and reach.</p><small>Ultimate: Titan Bankai</small></div>
-<div class="sub" style="--c:#1E8FA3"><h4>Urahara</h4><small style="margin:0 0 6px">Binding Zanpakut&#333;</small><p>Chains, seals and healing light. The best Kid&#333; caster in the game.</p><small>Ultimate: Chain Domain</small></div>
+<div class="sub" style="--c:#1E8FA3"><h4>Urahara</h4><small style="margin:0 0 6px">Binding Zanpakut&#333;</small><p>Chains, seals and healing. The best Kid&#333; caster.</p><small>Ultimate: Chain Domain</small></div>
 </div></div></article>
 
 <article class="cls qu"><div class="band"><h3>Quincy</h3><p>Gather the light. Never miss. Patient hunters who weave spirit particles into bows, blades and barriers.</p></div>
 <div class="body"><div class="stats"><span class="stat">Hit Die <b>d8</b></span><span class="stat">Spirit ability <b>Intelligence</b></span><span class="stat">Saves <b>DEX, INT</b></span><span class="stat">Signature <b>Reishi Bow, Seele Schneider</b></span></div>
 <div class="grid g4">
-<div class="sub" style="--c:#2F6FD0"><h4>Uryū Ishida</h4><small style="margin:0 0 6px">Marksman Art</small><p>One arrow, one answer. Long range, piercing shots and critical hits.</p><small>Ultimate: Vollst&auml;ndig Marksman</small></div>
+<div class="sub" style="--c:#2F6FD0"><h4>Uryū Ishida</h4><small style="margin:0 0 6px">Marksman Art</small><p>One arrow, one answer. Long, piercing shots.</p><small>Ultimate: Vollst&auml;ndig Marksman</small></div>
 <div class="sub" style="--c:#5E6E7E"><h4>Sōken Ishida</h4><small style="margin:0 0 6px">Blade Art</small><p>Close in and cut the spirit itself with Seele Schneider.</p><small>Ultimate: Blade Storm</small></div>
 <div class="sub" style="--c:#B8901A"><h4>Haschwalth</h4><small style="margin:0 0 6px">Ward Art</small><p>A guardian's light. Domes, barriers and a last stand for allies.</p><small>Ultimate: Sanctuary</small></div>
 <div class="sub" style="--c:#E0431A"><h4>Bazz-B</h4><small style="margin:0 0 6px">Blaze Art</small><p>Your Letter is Heat. Every arrow arrives already burning.</p><small>Ultimate: Blaze Complete</small></div>
@@ -132,10 +132,10 @@ footer{padding:40px 0 60px;color:var(--mute);font-size:13px}
 <article class="cls fb"><div class="band"><h3>Fullbringer</h3><p>Everything you love has a soul. Yours answers back. A bond with an everyday object unlocks tricks of memory, space and rejection.</p></div>
 <div class="body"><div class="stats"><span class="stat">Hit Die <b>d8</b></span><span class="stat">Spirit ability <b>Charisma</b></span><span class="stat">Saves <b>CHA, DEX</b></span><span class="stat">Signature <b>Bond Weapon, Imprints</b></span></div>
 <div class="grid g4">
-<div class="sub" style="--c:#1B9C85"><h4>Ginjō</h4><small style="margin:0 0 6px">Armament Source</small><p>The bond becomes armor and muscle. A fortress with a heavy fist.</p><small>Ultimate: Armored Form</small></div>
+<div class="sub" style="--c:#1B9C85"><h4>Ginjō</h4><small style="margin:0 0 6px">Armament Source</small><p>Your bond becomes armor and muscle.</p><small>Ultimate: Armored Form</small></div>
 <div class="sub" style="--c:#3F55C9"><h4>Riruka</h4><small style="margin:0 0 6px">Warp Source</small><p>Gravity, space and speed bend around you.</p><small>Ultimate: Warp Form</small></div>
 <div class="sub" style="--c:#C99A14"><h4>Tsukishima</h4><small style="margin:0 0 6px">Memory Source</small><p>You see what things remember, and what opponents will do.</p><small>Ultimate: Soul Invasion</small></div>
-<div class="sub" style="--c:#D9548A"><h4>Orihime</h4><small style="margin:0 0 6px">Weaver Source</small><p>You reject the damage. Healing and shields for the whole party.</p><small>Ultimate: Rejection</small></div>
+<div class="sub" style="--c:#D9548A"><h4>Orihime</h4><small style="margin:0 0 6px">Weaver Source</small><p>You reject damage. Heals and shields the party.</p><small>Ultimate: Rejection</small></div>
 </div></div></article>
 </div></section>
 
