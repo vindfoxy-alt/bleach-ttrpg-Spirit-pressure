@@ -152,7 +152,7 @@ function bv(a){return S.method==="array"||S.method==="roll"?S.pool[S.asg[a]]:S.m
 function rollPool(){return [1,2,3,4,5,6].map(()=>{let r=[1,2,3,4].map(()=>1+Math.floor(Math.random()*6)).sort().slice(1);return r.reduce((x,y)=>x+y,0)}).sort((x,y)=>y-x);}
 function total(a){let v=bv(a)+(ANC[S.anc].fixed[a]||0)+((ANC[S.anc].free&&S.free.includes(a))?1:0)+S.asi[a];return Math.min(v,20);}
 function render(){
- const C=DATA[S.cls];document.documentElement.style.setProperty("--c",C.color);
+ const C=DATA[S.cls];document.documentElement.style.setProperty("--c",(S.lvl>=2&&C.subs[S.sub]&&C.subs[S.sub].color)||C.color);
  // subclass
  if(S.lvl>=2){$("subpick").innerHTML=C.subs.map((s,i)=>`<div class="subcard ${S.sub===i?"on":""}" data-i="${i}" style="--s:${s.color}"><b>${s.name}</b><small>${s.kind}</small><span class="mini">${s.flavor}</span></div>`).join("");
   const sb=C.subs[S.sub];
