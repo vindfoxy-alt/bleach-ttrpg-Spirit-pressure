@@ -69,7 +69,7 @@ footer{padding:40px 0 60px;color:var(--mute);font-size:13px}
 </style>
 </head>
 <body>
-<nav><div class="in"><b>SPIRIT PRESSURE <span class="ver">v0.4 &middot; updated 27 Nov 11:07</span></b><a href="#overview">Overview</a><a href="#classes">Classes</a><a href="#reiatsu">Reiatsu</a><a href="#roadmap">Roadmap</a><a href="#changelog">Changelog</a><a href="creator.html">Character Creator</a><a href="Spirit_Pressure_Players_Handbook.pdf">Player's Handbook</a><a href="Spirit_Pressure_GM_Guide.pdf">GM Guide</a></div></nav>
+<nav><div class="in"><b>SPIRIT PRESSURE <span class="ver">v0.4<span id="upd"></span></span></b><a href="#overview">Overview</a><a href="#classes">Classes</a><a href="#reiatsu">Reiatsu</a><a href="#roadmap">Roadmap</a><a href="#changelog">Changelog</a><a href="creator.html">Character Creator</a><a href="Spirit_Pressure_Players_Handbook.pdf">Player's Handbook</a><a href="Spirit_Pressure_GM_Guide.pdf">GM Guide</a></div></nav>
 
 <header class="hero">
 <svg viewBox="0 0 760 760" aria-hidden="true">
@@ -179,5 +179,16 @@ footer{padding:40px 0 60px;color:var(--mute);font-size:13px}
 </div></section>
 
 <footer><div class="wrap">Spirit Pressure is an independent fan-made game inspired by the manga and anime <i>Bleach</i> by Tite Kubo. It is not affiliated with, endorsed by or sponsored by the creator, Shueisha, VIZ Media, TV Tokyo or Studio Pierrot. It is also not affiliated with Wizards of the Coast. Working title, version 0.4.</div></footer>
+<script>
+(function(){
+  var el=document.getElementById("upd"); if(!el) return;
+  fetch("https://api.github.com/repos/vindfoxy-alt/bleach-ttrpg-Spirit-pressure/commits/main",{cache:"no-store"})
+    .then(function(r){return r.ok?r.json():null}).then(function(j){
+      if(!j||!j.commit) return;
+      var d=new Date(j.commit.committer.date);
+      el.textContent=" \u00b7 updated "+d.toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+    }).catch(function(){});
+})();
+</script>
 </body>
 </html>
