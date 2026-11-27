@@ -52,10 +52,11 @@ section h2{font-size:42px}
 .stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px}
 .stat{border:1px solid var(--line);border-radius:8px;padding:7px 14px;font-size:15px;color:var(--mute)}
 .stat b{color:var(--c)}
-.sub{border:1px solid var(--line);border-top:5px solid var(--c);border-radius:8px;padding:16px 18px;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 14%,#13131a),#13131a 70%)}
+.sub{display:flex;flex-direction:column;border:1px solid var(--line);border-top:5px solid var(--c);border-radius:8px;padding:16px 18px;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 14%,#13131a),#13131a 70%)}
 .sub h4{margin:0 0 4px;font-family:Georgia,serif;font-size:20px}
 .sub p{margin:0;color:var(--mute);font-size:16px}
 .sub small{display:block;margin-top:10px;color:var(--c);font-weight:700;font-size:13px;letter-spacing:.05em;text-transform:uppercase}
+.sub small:last-child{margin-top:auto;padding-top:12px}
 .sr{--c:var(--sr)}.qu{--c:var(--qu)}.hb{--c:var(--hb)}.fb{--c:var(--fb)}
 table{width:100%;border-collapse:collapse;margin-top:22px;font-size:17px}
 th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
