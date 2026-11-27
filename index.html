@@ -54,7 +54,7 @@ section h2{font-size:42px}
 .stat b{color:var(--c)}
 .sub{display:flex;flex-direction:column;border:1px solid var(--line);border-top:5px solid var(--c);border-radius:8px;padding:16px 18px;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 14%,#13131a),#13131a 70%)}
 .sub h4{margin:0 0 4px;font-family:Georgia,serif;font-size:20px}
-.sub p{margin:0;color:var(--mute);font-size:16px}
+.sub p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:0;color:var(--mute);font-size:16px}
 .sub small{display:block;margin-top:10px;color:var(--c);font-weight:700;font-size:13px;letter-spacing:.05em;text-transform:uppercase}
 .sub small:last-child{margin-top:auto;padding-top:12px}
 .sr{--c:var(--sr)}.qu{--c:var(--qu)}.hb{--c:var(--hb)}.fb{--c:var(--fb)}
@@ -105,7 +105,7 @@ footer{padding:40px 0 60px;color:var(--mute);font-size:13px}
 <article class="cls sr"><div class="band"><h3>Soul Reaper</h3><p>Sword, spirit and the voice of your blade. Duelists and spellblades with a bonded zanpakut&#333;, flash steps and the chanted arts of Kid&#333;.</p></div>
 <div class="body"><div class="stats"><span class="stat">Hit Die <b>d10</b></span><span class="stat">Spirit ability <b>Wisdom</b></span><span class="stat">Saves <b>STR, WIS</b></span><span class="stat">Signature <b>Shikai, Shunpo, Kid&#333;</b></span></div>
 <div class="grid g4">
-<div class="sub" style="--c:#D9531E"><h4>Yamamoto</h4><small style="margin:0 0 6px">Elemental Zanpakut&#333;</small><p>Fire, frost, storm or quake. Your blade is a living element with waves and an aura.</p><small>Ultimate: Elemental Bankai</small></div>
+<div class="sub" style="--c:#D9531E"><h4>Yamamoto</h4><small style="margin:0 0 6px">Elemental Zanpakut&#333;</small><p>Fire, frost, storm or quake. Your blade is a living element.</p><small>Ultimate: Elemental Bankai</small></div>
 <div class="sub" style="--c:#7B4FB8"><h4>Aizen</h4><small style="margin:0 0 6px">Mirage Zanpakut&#333;</small><p>Afterimages, duplicates and false victories. Fights with deception.</p><small>Ultimate: Total Illusion</small></div>
 <div class="sub" style="--c:#8C5A2B"><h4>Zaraki</h4><small style="margin:0 0 6px">Brute Zanpakut&#333;</small><p>No tricks. A massive blade with crushing blows and reach.</p><small>Ultimate: Titan Bankai</small></div>
 <div class="sub" style="--c:#1E8FA3"><h4>Urahara</h4><small style="margin:0 0 6px">Binding Zanpakut&#333;</small><p>Chains, seals and healing light. The best Kid&#333; caster in the game.</p><small>Ultimate: Chain Domain</small></div>
@@ -123,7 +123,7 @@ footer{padding:40px 0 60px;color:var(--mute);font-size:13px}
 <article class="cls hb"><div class="band"><h3>Hollowborn</h3><p>The monster inside is not you. Not quite. Humans who carry a hollow's power: claws, surges, regeneration and a devastating Cero.</p></div>
 <div class="body"><div class="stats"><span class="stat">Hit Die <b>d12</b></span><span class="stat">Spirit ability <b>Constitution</b></span><span class="stat">Saves <b>CON, STR</b></span><span class="stat">Signature <b>Hollow Surge, Cero</b></span></div>
 <div class="grid g4">
-<div class="sub" style="--c:#C0272D"><h4>Shinji Hirako</h4><small style="margin:0 0 6px">Vizard</small><p>You pulled the mask on yourself. A disciplined fighter who wields the hollow with a blade.</p><small>Ultimate: Full Mask</small></div>
+<div class="sub" style="--c:#C0272D"><h4>Shinji Hirako</h4><small style="margin:0 0 6px">Vizard</small><p>You pulled the mask on yourself. A disciplined hollow-powered swordsman.</p><small>Ultimate: Full Mask</small></div>
 <div class="sub" style="--c:#D9701A"><h4>Grimmjow</h4><small style="margin:0 0 6px">Feral</small><p>Instinct first. Sonído speed, pounces and a predator's senses.</p><small>Ultimate: Apex Form</small></div>
 <div class="sub" style="--c:#55616B"><h4>Yammy</h4><small style="margin:0 0 6px">Bulwark</small><p>Your hide is armor. A wall that hits back.</p><small>Ultimate: Iron Hide</small></div>
 <div class="sub" style="--c:#7A2FB8"><h4>Ulquiorra</h4><small style="margin:0 0 6px">Voidcaller</small><p>Beams, bullets and one very large explosion.</p><small>Ultimate: Gran Cero</small></div>
