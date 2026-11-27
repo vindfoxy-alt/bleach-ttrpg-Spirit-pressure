@@ -23,6 +23,7 @@ class H:
         s.once = set()
         s.resist = 0.0; s.dis = 0.0; s.ac_bonus = 0.0
         s.hits_round = 0
+        s.dealt = 0.0; s.timer = 3; s.dead = False; s.dupl = 0; s.wall = 0; s.ac_all = 0
     @property
     def alive(s): return s.hp > 0
 
@@ -33,11 +34,15 @@ def baseline(L):
     h = H(hp, ac, atks, "base"); h.cls = "base"; h.rpmax = 0; h.rp = 0; h.L = L
     return h
 
-def enemies(L, k):
+PERSONA = ["brute", "focus", "assassin", "hunter", "bully"]
+
+def enemies(L, k, rng=None):
     b = {3: (60, 14, 6, 2, 8), 8: (150, 16, 9, 2, 16), 13: (260, 17, 11, 3, 20), 18: (380, 18, 13, 3, 28)}[L]
     hp, ac, th, n, dm = b
     boss = H(int(hp * k), ac, [(th, dm * (0.8 + 0.2 * k))] * n, "boss")
     m = [H(int(hp * k * 0.3), ac - 2, [(th - 2, dm * 0.55 * (0.8 + 0.2 * k))], "min") for _ in range(2)]
+    for e in [m[0], m[1], boss]:
+        e.persona = rng.choice(PERSONA) if rng else "brute"
     return [m[0], m[1], boss]
 
 def hit_p(th, ac, adv=0):
@@ -188,134 +193,158 @@ SUBS = {
 }
 
 # ---------------- fight -----------------
+# Personalities decide whom an enemy attacks:
+#   brute    - any living party member at random
+#   focus    - the member with the lowest HP percentage (finishes the wounded)
+#   assassin - the squishiest member: lowest AC, ties by lowest max HP
+#   hunter   - whoever has dealt the most damage so far (goes after the biggest threat)
+#   bully    - the member with the most HP left (tests the tank), otherwise random
+def pick_target(e, party, rng):
+    up = [p for p in party if p.hp > 0]
+    if not up: return None
+    ps = getattr(e, "persona", "brute")
+    if ps == "focus": return min(up, key=lambda p: p.hp / p.maxhp)
+    if ps == "assassin": return min(up, key=lambda p: (p.ac + p.ac_bonus_now(), p.maxhp))
+    if ps == "hunter": return max(up, key=lambda p: (p.dealt, rng.random()))
+    if ps == "bully": return max(up, key=lambda p: p.hp)
+    return rng.choice(up)
+
+def _ac_bonus_now(self): return getattr(self, "ac_bonus", 0)
+H.ac_bonus_now = _ac_bonus_now
+
+def d20(rng, adv=0):
+    a, b = rng.randint(1, 20), rng.randint(1, 20)
+    return max(a, b) if adv > 0 else min(a, b) if adv < 0 else a
+
+def reserve(h):
+    c = [a["cost"] for a in h.abil if a["kind"] == "act" and "heal" in a]
+    return min(c) if c else 0
+
 def fight(party, foes, rng, maxr=12):
-    for h in party:
-        h.maxrp = h.rp
-    stat = {"hero_dmg": 0, "hero_heal": 0}
     hero = party[0]
+    stat = {"hero_dmg": 0, "hero_heal": 0, "saved": 0}
+    for h in party: h.maxrp = h.rp
     for rnd in range(1, maxr + 1):
-        alive_f = [e for e in foes if e.alive]
-        if not alive_f: return True, rnd, stat
-        if not any(h.alive for h in party): return False, rnd, stat
-        shield = {"ac_party": 0, "ac_all": 0}
-        slowed = False
-        # ---- hero turn ----
+        if not any(e.alive for e in foes): return True, rnd, stat
+        if not any(p.hp > 0 for p in party): return False, rnd, stat
+        # ---- party turns ----
         for idx, h in enumerate(party):
-            if not h.alive: continue
             alive_f = [e for e in foes if e.alive]
             if not alive_f: break
+            if h.hp <= 0: continue
             if idx > 0:
-                atk_n = len(h.atks)
                 tgt = alive_f[0]
                 for t, dm in h.atks:
-                    if rng.random() < hit_p(t, tgt.ac, getattr(tgt, "marked", 0) and 1 or 0):
-                        dm_ = dm * (1.0 if rng.random() > 0.05 else 2)
-                        tgt.hp -= dm_
-                        if tgt.hp <= 0 and [e for e in foes if e.alive]: tgt = [e for e in foes if e.alive][0]
+                    if tgt.hp <= 0:
+                        r = [e for e in foes if e.alive]
+                        if not r: break
+                        tgt = r[0]
+                    adv = 1 if getattr(tgt, "marked", 0) else 0
+                    roll = d20(rng, adv)
+                    if roll == 20 or (roll != 1 and roll + t >= tgt.ac):
+                        dm_ = dm * (2 if roll == 20 else 1)
+                        tgt.hp -= dm_; h.dealt += dm_
+                if getattr(alive_f[-1], "marked", 0): alive_f[-1].marked = 0
                 continue
-            # hero
-            dmg = 0.0
-            if rnd == 1 or True:
-                for a in h.abil:
-                    if a["kind"] != "buff": continue
-                    key = id(a)
-                    if key in h.once: continue
-                    if a["cost"] <= h.rp:
-                        # buffs that are always on (cost 0) or cheap are applied once per fight; ult only from round 2 (after surge/shikai)
-                        if a.get("once") and rnd < 2: continue
-                        h.rp -= a["cost"]; h.once.add(key); h.buffs.append(a)
+            # ---------- hero ----------
+            for a in h.abil:
+                if a["kind"] != "buff": continue
+                key = id(a)
+                if key in h.once: continue
+                if a["cost"] <= h.rp:
+                    if a.get("once") and rnd < 2: continue
+                    h.rp -= a["cost"]; h.once.add(key); h.buffs.append(a)
             xd = sum(b.get("xd", 0) for b in h.buffs)
             xdfirst = sum(b.get("xdfirst", 0) for b in h.buffs)
             xhit = sum(b.get("xhit", 0) for b in h.buffs)
             crit = sum(b.get("crit", 0) for b in h.buffs)
             xatk = sum(b.get("atk", 0) for b in h.buffs)
             adv = 1 if any(b.get("advfirst") or b.get("adv") for b in h.buffs) else 0
+            tmp = sum(b.get("tmp", 0) for b in h.buffs)
             h.resist = min(0.8, sum(b.get("resist", 0) for b in h.buffs))
             h.dis = min(0.6, sum(b.get("dis", 0) for b in h.buffs))
             h.ac_bonus = sum(b.get("ac", 0) for b in h.buffs)
             h.ac_all = sum(b.get("ac_all", 0) for b in h.buffs)
-            if rnd == 1:
-                h.hp += sum(b.get("tmp", 0) for b in h.buffs); h.maxhp = max(h.maxhp, h.hp)
-            h.hp = min(h.maxhp + sum(b.get("tmp", 0) for b in h.buffs), h.hp + sum(b.get("heal_r", 0) for b in h.buffs))
+            if rnd == 1 or not hasattr(h, "tmp_done"):
+                h.hp += tmp; h.maxhp += tmp; h.tmp_done = True
+            h.hp = min(h.maxhp, h.hp + sum(b.get("heal_r", 0) for b in h.buffs))
+            heal_all = sum(b.get("heal_all", 0) for b in h.buffs)
+            if heal_all:
+                for p in party:
+                    if p.hp > 0: p.hp = min(p.maxhp, p.hp + heal_all)
             aura = sum(b.get("aura", 0) for b in h.buffs)
-            for e in alive_f: e.hp -= aura * 0.7; stat["hero_dmg"] += aura * 0.7
-            if any(b.get("ctrl_aura") for b in h.buffs):
-                ca = sum(b.get("ctrl_aura", 0) for b in h.buffs)
+            for e in alive_f:
+                e.hp -= aura * 0.7; h.dealt += aura * 0.7; stat["hero_dmg"] += aura * 0.7
+            ca = sum(b.get("ctrl_aura", 0) for b in h.buffs)
+            if ca:
                 for e in alive_f:
                     if rng.random() < ca: e.stunned = True
-            # action ability: choose by priority
-            acted = False
-            ar = h.rp
-            acts = [a for a in h.abil if a["kind"] == "act"]
-            # prefer: heal if an ally is below 50%, wall/dup/shrink vs boss, aoe if >=2 enemies, ctrl
-            low = [p for p in party if p.alive and p.hp < 0.5 * p.maxhp]
+            # action ability
+            acts = sorted([a for a in h.abil if a["kind"] == "act"], key=lambda a: 0 if ("heal" in a or "revive" in a) else 1)
+            hurt = [p for p in party if p.hp < 0.5 * p.maxhp]            # includes downed (hp <= 0)
             for a in acts:
                 if a["cost"] > h.rp: continue
                 if a.get("once") and id(a) in h.once: continue
                 if "heal" in a:
-                    if not low: continue
-                    t = min(low, key=lambda p: p.hp / p.maxhp)
+                    if not hurt: continue
+                    t = min(hurt, key=lambda p: p.hp / p.maxhp)
                     amt = a["heal"] * (2 if any(b.get("heal_mult") for b in h.buffs) else 1)
+                    if t.hp <= 0: t.hp = 0; t.timer = 3
                     t.hp = min(t.maxhp, t.hp + amt); stat["hero_heal"] += amt
-                    h.rp -= a["cost"]; acted = True; break
+                    h.rp -= a["cost"]; break
+                if "revive" in a:
+                    dead = [p for p in party if p.dead]
+                    if not dead: continue
+                    p = dead[0]; p.dead = False; p.hp = 1; p.timer = 3
+                    h.once.add(id(a)); h.rp -= a["cost"]; break
                 if "aoe" in a:
-                    if len(alive_f) < 2 and a.get("targets", 9) > 1 and h.cls != "hb" and a["name"] not in ("oscuras",):
-                        pass
                     tg = alive_f[:a.get("targets", 3)]
+                    m = 1.4 if (a.get("name") == "cero" and any(b.get("ceromult") for b in h.buffs)) else 1.0
                     if a.get("once"): h.once.add(id(a))
-                    m = 1.4 if (a["name"] == "cero" and any(b.get("ceromult") for b in h.buffs)) else 1.0
                     for e in tg:
-                        e.hp -= a["aoe"] * 0.7 * m; stat["hero_dmg"] += a["aoe"] * 0.7 * m
-                    h.rp -= a["cost"]; acted = True; break
+                        e.hp -= a["aoe"] * 0.7 * m; h.dealt += a["aoe"] * 0.7 * m; stat["hero_dmg"] += a["aoe"] * 0.7 * m
+                    h.rp -= a["cost"]; break
                 if "shrink" in a:
                     boss = alive_f[-1]
                     if rng.random() < a["shrink"] and not getattr(boss, "shrunk", 0):
                         boss.stunned = True; boss.shrunk = 2
-                    h.rp -= a["cost"]; acted = True; break
+                    h.rp -= a["cost"]; break
                 if "ctrl" in a:
                     boss = alive_f[-1]
                     if rng.random() < a["ctrl"]: boss.stunned = True
-                    h.rp -= a["cost"]; acted = True; break
+                    h.rp -= a["cost"]; break
                 if "dupl" in a:
-                    h.dupl = 3; h.rp -= a["cost"]; acted = True; break
+                    h.dupl = 3; h.rp -= a["cost"]; break
                 if "wall" in a:
-                    h.wall = a["wall"]; h.rp -= a["cost"]; acted = True; break
+                    h.wall = a["wall"]; h.rp -= a["cost"]; break
                 if "advnext" in a:
                     alive_f[-1].marked = 1; h.rp -= a["cost"]; break
                 if "dmg" in a:
-                    alive_f[0].hp -= a["dmg"]; stat["hero_dmg"] += a["dmg"]; h.rp -= a["cost"]; break
-                if "undo" in a or "revive" in a:
-                    continue
-            if not acted or True:
-                n = len(h.atks) + xatk
-                tgt = alive_f[0]
-                first = True
-                base_hit = h.atks[0][0] + xhit
-                base_dm = h.atks[0][1]
-                if any(b.get("bigdie") for b in h.buffs): base_dm *= 1.4
-                conc = getattr(h, "conc", 0)
-                for i in range(n):
-                    if not tgt.alive:
-                        r = [e for e in foes if e.alive]
-                        if not r: break
-                        tgt = r[0]
-                    extra = xd + (xdfirst if first else 0)
-                    if conc and h.rp >= conc and i == 0:
-                        # Concentrated Shot: spend RP for 1d6 each (keep half the pool for abilities)
-                        spend = min(conc, int(h.rp * 0.4))
-                        extra += 3.5 * spend; h.rp -= spend
-                    p = hit_p(base_hit, tgt.ac, adv if first else (1 if getattr(tgt, "marked", 0) else 0))
-                    if getattr(tgt, "marked", 0): p = hit_p(base_hit, tgt.ac, 1)
-                    crit_p = 0.05 + crit
-                    if rng.random() < p:
-                        dm_ = base_dm + extra
-                        if rng.random() < crit_p / max(p, 0.05): dm_ *= 1.8
-                        tgt.hp -= dm_; stat["hero_dmg"] += dm_
-                        h.rp = min(h.rpmax, h.rp + (1 if h.cls == "qu" else 0))
-                    first = False
-                    if getattr(tgt, "marked", 0): tgt.marked = 0
-        # ---- enemy turn ----
-        alive_p = [p for p in party if p.alive]
+                    alive_f[0].hp -= a["dmg"]; h.dealt += a["dmg"]; stat["hero_dmg"] += a["dmg"]; h.rp -= a["cost"]; break
+            n = len(h.atks) + xatk
+            tgt = alive_f[0]; first = True
+            base_hit = h.atks[0][0] + xhit; base_dm = h.atks[0][1]
+            if any(b.get("bigdie") for b in h.buffs): base_dm *= 1.4
+            conc = getattr(h, "conc", 0)
+            for i in range(n):
+                if tgt.hp <= 0:
+                    r = [e for e in foes if e.alive]
+                    if not r: break
+                    tgt = r[0]
+                extra = xd + (xdfirst if first else 0)
+                if conc and h.rp >= conc and i == 0:
+                    spend = min(conc, int(h.rp * 0.4)); extra += 3.5 * spend; h.rp -= spend
+                a_ = adv if first else 0
+                if getattr(tgt, "marked", 0): a_ = 1
+                roll = d20(rng, a_)
+                cr = roll >= 20 - int(crit * 20)
+                if cr or (roll != 1 and roll + base_hit >= tgt.ac):
+                    dm_ = (base_dm + extra) * (1.8 if cr else 1)
+                    tgt.hp -= dm_; h.dealt += dm_; stat["hero_dmg"] += dm_
+                    if h.cls == "qu": h.rp = min(h.rpmax, h.rp + 1)
+                first = False
+            if getattr(alive_f[-1], "marked", 0): alive_f[-1].marked = 0
+        # ---- enemy turns ----
         for e in [x for x in foes if x.alive]:
             if getattr(e, "stunned", False):
                 e.stunned = False
@@ -323,57 +352,56 @@ def fight(party, foes, rng, maxr=12):
                     e.shrunk -= 1
                     if e.shrunk > 0: e.stunned = True
                 continue
-            alive_p = [p for p in party if p.alive]
-            if not alive_p: break
             for t_, dm_ in e.atks:
-                alive_p = [p for p in party if p.alive]
-                if not alive_p: break
-                tgt = rng.choice(alive_p)
-                ac = tgt.ac + getattr(tgt, "ac_bonus", 0)
-                ac += party[0].ac_all if hasattr(party[0], "ac_all") else 0
-                if tgt is not hero:
-                    for b in hero.buffs: pass
-                    ac += hero_support_ac(hero)
-                adv = -1 if (tgt is hero and rng.random() < hero.dis) else 0
-                if getattr(tgt, "dupl", 0) and rng.random() < 0.6:
+                tgt = pick_target(e, party, rng)
+                if tgt is None: break
+                if tgt.dupl > 0 and rng.random() < 0.6:
                     tgt.dupl -= 1; continue
-                p = hit_p(t_, ac, adv)
-                if rng.random() < p:
-                    dm = dm_
-                    if tgt is hero:
-                        dm *= (1 - hero.resist)
-                        sr = [a for a in hero.abil if a.get("selfred")]
-                        if sr and hero.rp >= 2: hero.rp -= 2; dm = max(0, dm - sr[0]["selfred"])
-                    if getattr(tgt, "wall", 0) > 0 and tgt is not hero:
-                        pass
-                    if party[0].wall if hasattr(party[0], "wall") else 0:
-                        if tgt is not hero and rng.random() < 0.35:
-                            absorbed = min(dm, party[0].wall); party[0].wall -= absorbed; dm -= absorbed
-                    tgt.hp -= dm
-                    # thorns / retaliation
-                    th = sum(b.get("thorns", 0) + b.get("retaliate", 0) for b in hero.buffs)
-                    if th and tgt is hero: e.hp -= th * 0.8
-                    if getattr(tgt, "hp", 1) <= 0 and tgt is hero and "unbreak" in getattr(hero, "once", set()): pass
-        # end round
+                ac = tgt.ac + tgt.ac_bonus_now() + (hero.ac_all if tgt is not hero and hero.hp > 0 else 0)
+                adv = -1 if (tgt is hero and rng.random() < hero.dis) else 0
+                roll = d20(rng, adv)
+                hit = roll == 20 or (roll != 1 and roll + t_ >= ac)
+                # hero reactions: shield an ally (or self) when a hit would be turned into a miss
+                if hit and roll != 20 and hero.hp > 0:
+                    for a in hero.abil:
+                        if a["kind"] == "react" and "ac_party" in a and hero.rp - a["cost"] >= reserve(hero) and roll + t_ < ac + a["ac_party"]:
+                            hero.rp -= a["cost"]; hit = False; stat["saved"] += dm_; break
+                    if hit:
+                        for a in hero.abil:
+                            if a["kind"] == "react" and "replay" in a and tgt is not hero and hero.rp - a["cost"] >= reserve(hero):
+                                hero.rp -= a["cost"]
+                                r2 = d20(rng, -1)
+                                hit = r2 == 20 or (r2 != 1 and r2 + t_ >= ac)
+                                if not hit: stat["saved"] += dm_
+                                break
+                if not hit: continue
+                dm = dm_
+                if tgt is hero:
+                    dm *= (1 - hero.resist)
+                    sr = [a for a in hero.abil if a.get("selfred")]
+                    if sr and hero.rp >= 2: hero.rp -= 2; dm = max(0, dm - sr[0]["selfred"])
+                if tgt is not hero and hero.wall > 0 and rng.random() < 0.5:
+                    ab = min(dm, hero.wall); hero.wall -= ab; dm -= ab; stat["saved"] += ab
+                if tgt.hp > 0 and tgt.hp - dm <= 0 and tgt is hero and getattr(hero, "bond_save", False) is False and hero.cls == "fb":
+                    hero.bond_save = True; tgt.hp = 1; continue
+                tgt.hp -= dm
+                th = sum(b.get("thorns", 0) + b.get("retaliate", 0) for b in hero.buffs)
+                if th and tgt is hero: e.hp -= th * 0.8
+                if tgt.hp <= 0: tgt.timer = 3
+        # ---- end of round: downed members bleed out ----
+        for p in party:
+            if p.hp <= 0 and not p.dead:
+                p.timer -= 1
+                if p.timer <= 0: p.dead = True; p.hp = -999
     return (not any(e.alive for e in foes)), maxr, stat
-
-def hero_support_ac(hero):
-    ac = 0
-    for a in hero.abil:
-        if a["kind"] == "react" and "ac_party" in a and hero.rp >= a["cost"]:
-            ac += a["ac_party"] * 0.5     # applies to about half of the hits (reaction used when hit, RP limited)
-    for b in hero.buffs:
-        ac += b.get("ac_all", 0) if b.get("ac_all", 0) >= 1 else 0
-    return ac
 
 def run(party_fn, L, k, n=1500, seed=1):
     rng = random.Random(seed)
     wins = 0; rounds = []; hd = []
     for _ in range(n):
-        party = party_fn()
-        foes = enemies(L, k)
+        party = party_fn(); foes = enemies(L, k, rng)
         ok, r, st = fight(party, foes, rng)
-        wins += ok; rounds.append(r); hd.append(st["hero_dmg"] + st["hero_heal"])
+        wins += ok; rounds.append(r); hd.append(st["hero_dmg"] + st["hero_heal"] + st["saved"])
     return wins / n, statistics.mean(rounds), statistics.mean(hd)
 
 def calibrate(L, target=0.60):
@@ -384,20 +412,3 @@ def calibrate(L, target=0.60):
         if w > target: lo = k
         else: hi = k
     return (lo + hi) / 2
-
-if __name__ == "__main__":
-    out = {"cal": {}, "base": {}, "res": {}}
-    for L in LV:
-        k = calibrate(L); out["cal"][L] = k
-        out["base"][L] = run(lambda: [baseline(L) for _ in range(4)], L, k)[0]
-        for cls, names in SUBS.items():
-            for nm in names:
-                w, r, hd = run(lambda: [sub(cls, nm, L)] + [baseline(L) for _ in range(3)], L, k)
-                out["res"].setdefault(nm, {})[L] = round(w, 3)
-    json.dump(out, open("simres.json", "w"), indent=1, ensure_ascii=False)
-    print("calibration", {L: round(k, 2) for L, k in out["cal"].items()}, "baseline", out["base"])
-    for cls, names in SUBS.items():
-        print("\n##", cls)
-        for nm in names:
-            r = out["res"][nm]
-            print(f"{nm:16s}", "  ".join(f"L{L}:{r[L]*100:4.0f}%" for L in LV), f"  avg {statistics.mean(r.values())*100:4.0f}%")

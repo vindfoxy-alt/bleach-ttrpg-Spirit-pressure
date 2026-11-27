@@ -69,7 +69,7 @@ footer{padding:40px 0 60px;color:var(--mute);font-size:13px}
 </style>
 </head>
 <body>
-<nav><div class="in"><b>SPIRIT PRESSURE <span class="ver">v0.5<span id="upd"></span></span></b><a href="#overview">Overview</a><a href="#classes">Classes</a><a href="#reiatsu">Reiatsu</a><a href="#roadmap">Roadmap</a><a href="#changelog">Changelog</a><a href="creator.html">Character Creator</a><a href="Spirit_Pressure_Players_Handbook.pdf">Player's Handbook</a><a href="Spirit_Pressure_GM_Guide.pdf">GM Guide</a></div></nav>
+<nav><div class="in"><b>SPIRIT PRESSURE <span class="ver">v0.5<span id="upd"></span></span></b><a href="#overview">Overview</a><a href="#classes">Classes</a><a href="#reiatsu">Reiatsu</a><a href="#roadmap">Roadmap</a><a href="#changelog">Changelog</a><a href="creator.html">Character Creator</a><a href="simulator.html">Fight Simulator</a><a href="Spirit_Pressure_Players_Handbook.pdf">Player's Handbook</a><a href="Spirit_Pressure_GM_Guide.pdf">GM Guide</a></div></nav>
 
 <header class="hero">
 <svg viewBox="0 0 760 760" aria-hidden="true">
@@ -84,7 +84,7 @@ footer{padding:40px 0 60px;color:var(--mute);font-size:13px}
 <div class="wrap">
 <h1>SPIRIT<br>PRESSURE</h1>
 <p class="tag">A tabletop RPG of souls, blades and reiatsu. Four classes, sixteen subclasses, one familiar d20 engine.</p>
-<a class="btn main" href="Spirit_Pressure_Players_Handbook.pdf">Player's Handbook (PDF)</a><a class="btn main" href="Spirit_Pressure_GM_Guide.pdf">Game Master's Guide (PDF)</a><a class="btn alt" href="creator.html">Build a character</a><a class="btn alt" href="#classes">Browse the classes</a>
+<a class="btn main" href="Spirit_Pressure_Players_Handbook.pdf">Player's Handbook (PDF)</a><a class="btn main" href="Spirit_Pressure_GM_Guide.pdf">Game Master's Guide (PDF)</a><a class="btn alt" href="creator.html">Build a character</a><a class="btn alt" href="simulator.html">Fight simulator</a><a class="btn alt" href="#classes">Browse the classes</a>
 <div class="chips"><span class="chip">d20, 5e-style rules</span><span class="chip">Levels 1-20</span><span class="chip">3-5 players + GM</span><span class="chip">Separate HP and Reiatsu</span><span class="chip">Setting-neutral</span></div>
 </div>
 </header>
@@ -161,7 +161,7 @@ footer{padding:40px 0 60px;color:var(--mute);font-size:13px}
 <tr><td>Game Master's Guide (PDF)</td><td><span class="tag-s done">v0.2 out</span></td></tr>
 <tr><td>Class Handbook (one page per class and subclass)</td><td><span class="tag-s next">Next</span></td></tr>
 <tr><td>Character Creator</td><td><span class="tag-s done">v1 out</span></td></tr>
-<tr><td>Fight Simulator (balance testing)</td><td><span class="tag-s plan">Planned</span></td></tr>
+<tr><td>Fight Simulator (balance testing)</td><td><span class="tag-s done">v1 out</span></td></tr>
 <tr><td>Online Tabletop</td><td><span class="tag-s plan">Planned</span></td></tr>
 </table>
 </div></section>
@@ -169,7 +169,7 @@ footer{padding:40px 0 60px;color:var(--mute);font-size:13px}
 <section id="changelog"><div class="wrap">
 <h2>Changelog</h2>
 <h3>v0.5 &middot; 27 Nov 2026</h3>
-<ul class="log"><li>Subclasses reworked to match the series: Aizen (Ky&#333;ka Suigetsu), Zaraki (Nozarashi), Urahara (Benihime), Riruka (Dollhouse), Tsukishima, Ginj&#333;, Orihime, Haschwalth, Grimmjow, Yammy and Ulquiorra. Yamamoto is now fire only.</li><li>Quincy: the Reishi Bow hits with DEX, damage adds INT, range 120/360.</li><li>Creator: feature names link to the Player's Handbook, skills show their ability, and a Recommended build button fills in your class's best scores (&#9733; best, &#9670; second).</li><li>First balance pass from a fight simulator (in the tools folder): Hollowborn AC is 10 + DEX + half CON and Hollow Vitality heals half proficiency; Fullbringer Bond Weapon is now 1d10; Yamamoto's fire wall deals 1d8 and the burning is removed.</li><li>Support subclasses are stronger: Orihime (3d6 healing, 50 HP shield), Haschwalth (2d8 Warding Bow, cheaper dome, 3d6 returned damage), Urahara (4d6 healing, 1d8 domain healing) and Tsukishima (your allies also get advantage from Insertion).</li></ul>
+<ul class="log"><li>New Fight Simulator: pick a subclass and level, choose how the enemies behave (brute, focus, assassin, hunter or bully) and run a thousand fights, compare all 16 subclasses, or watch one fight round by round.</li><li>Subclasses reworked to match the series: Aizen (Ky&#333;ka Suigetsu), Zaraki (Nozarashi), Urahara (Benihime), Riruka (Dollhouse), Tsukishima, Ginj&#333;, Orihime, Haschwalth, Grimmjow, Yammy and Ulquiorra. Yamamoto is now fire only.</li><li>Quincy: the Reishi Bow hits with DEX, damage adds INT, range 120/360.</li><li>Creator: feature names link to the Player's Handbook, skills show their ability, and a Recommended build button fills in your class's best scores (&#9733; best, &#9670; second).</li><li>First balance pass from a fight simulator (in the tools folder): Hollowborn AC is 10 + DEX + half CON and Hollow Vitality heals half proficiency; Fullbringer Bond Weapon is now 1d10; Yamamoto's fire wall deals 1d8 and the burning is removed.</li><li>Support subclasses are stronger: Orihime (3d6 healing, 50 HP shield), Haschwalth (2d8 Warding Bow, cheaper dome, 3d6 returned damage), Urahara (4d6 healing, 1d8 domain healing) and Tsukishima (your allies also get advantage from Insertion).</li></ul>
 <h3>v0.4 &middot; 27 Nov 2026</h3>
 <ul class="log"><li>Every subclass now gives two permanent skill proficiencies at level 2, and each background lets you choose 2 of its 5 skills.</li><li>Creator: ability scores by standard array, point buy (27 points), or roll 4d6 and assign the results yourself.</li><li>New <a href="creator.html">Character Creator</a>: pick class, subclass, ancestry and background, assign scores, and get HP, RP, AC, saves, skills and features for levels 1-20. Save and load with a character code, or print the sheet.</li></ul>
 <h3>v0.3 &middot; 27 Nov 2026</h3>
